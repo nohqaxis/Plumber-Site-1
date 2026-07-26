@@ -11,14 +11,16 @@ export function generateStaticParams() {
   return suburbs.map((suburb) => ({ suburb: toSlug(suburb) }));
 }
 
-export function generateMetadata({ params }: { params: { suburb: string } }) {
-  const suburb = suburbs.find((item) => toSlug(item) === params.suburb);
+export async function generateMetadata({ params }: { params: Promise<{ suburb: string }> }) {
+  const { suburb: suburbSlug } = await params;
+  const suburb = suburbs.find((item) => toSlug(item) === suburbSlug);
   if (!suburb) return {};
-  return makeMetadata(`Plumber in ${suburb} | Pana Plumbing`, `Trusted local plumbing services in ${suburb}, Sydney.`, `/areas/${params.suburb}`);
+  return makeMetadata(`Plumber in ${suburb} | Pana Plumbing`, `Trusted local plumbing services in ${suburb}, Sydney.`, `/areas/${suburbSlug}`);
 }
 
-export default function SuburbPage({ params }: { params: { suburb: string } }) {
-  const suburb = suburbs.find((item) => toSlug(item) === params.suburb);
+export default async function SuburbPage({ params }: { params: Promise<{ suburb: string }> }) {
+  const { suburb: suburbSlug } = await params;
+  const suburb = suburbs.find((item) => toSlug(item) === suburbSlug);
   if (!suburb) notFound();
 
   return (

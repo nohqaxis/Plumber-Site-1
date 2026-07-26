@@ -7,14 +7,16 @@ export function generateStaticParams() {
   return getBlogPosts().map((post) => ({ slug: post.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
   if (!post) return {};
   return makeMetadata(`${post.title} | Pana Plumbing`, post.excerpt, `/blog/${post.slug}`);
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = getBlogPost(params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getBlogPost(slug);
   if (!post) notFound();
 
   return (
